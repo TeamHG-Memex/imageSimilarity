@@ -1,7 +1,6 @@
 
 from PIL import Image
 from glob import glob
-# from imageSimilarity import imageSimilarity
 from imageSimilarity import ImageSimilarity
 from random import shuffle
 if __name__ == '__main__':
@@ -26,7 +25,8 @@ if __name__ == '__main__':
     imgSim = ImageSimilarity(origImageFiles)
 
     for name, distortedSet in allDistortedImages.items():
-        for imgFile in distortedSet:
+        imgSim.resetScores()
+        for imgFile in distortedSet[:100]:
             imgSim.scoreImage( Image.open(imgFile) )
 
         print("\n\n--------------")

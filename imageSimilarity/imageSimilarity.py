@@ -1,7 +1,7 @@
 import imagehash
 import PIL
 from PIL import Image
-
+import operator
 
 from .imageBank import ImageBank, ImageBankItem
 
@@ -17,6 +17,14 @@ class ImageSimilarity(object):
     def __init__(self, imageAddresses=[], debug=0):
 
         self._imageBank = ImageBank(imageAddresses)
+
+        self.resetScores()
+
+        self.DEBUG = debug
+
+
+
+    def resetScores(self):
         self._scores = {
             'avgHash':{ 'name':"", "score":0 },
             'pHash':{ 'name':"", "score":0 },
@@ -28,16 +36,12 @@ class ImageSimilarity(object):
 
         self.__totalsCounter = 0
 
-        self.DEBUG = debug
-
 
     def getIndividualHashScores(self):
-
-
-        return { k:v/float(self.__totalsCounter) for k,v in  sorted( self._individualHashScores.items(),key=operator.itemgetter(1), reverse=True ) }
+        return [ (k,v/float(self.__totalsCounter)) for k,v in  sorted( self._individualHashScores.items(),key=operator.itemgetter(1), reverse=True ) ]
 
     def getTotalScores(self):
-        return self._totals
+        return self._totals, self._totals[1]/float(sum(self._totals))
 
     def addImageToBank(self, location):
         self._imageBank.addImageToBank(location)
