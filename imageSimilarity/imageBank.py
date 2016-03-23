@@ -13,7 +13,7 @@ class ImageBankItem(object):
         self.name = self.getRootImageName()
 
     def __repr__(self):
-        return str(self.pHash)
+        return self._pHash
 
     def __str__(self):
         return self.name
@@ -53,13 +53,12 @@ class ImageBank(object):
 
     def __init__(self, imageAddresses=[]):
         self._bank = [ ImageBankItem(self.loadImage(f)) for f in imageAddresses ]
-        self._bank.sort()
 
     def getBank(self):
         return self._bank
 
     def loadImage(self, location):
-        print("opening:",location)
+        # print("opening:",location)
         img = PIL.Image.open(location)
         img.load()
         return img
