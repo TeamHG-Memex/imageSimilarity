@@ -73,7 +73,8 @@ class ImageBank(object):
         pass
 
 
-
+    def getBank(self):
+        return self._bank
 
     def addImageToBank(self, location):
 

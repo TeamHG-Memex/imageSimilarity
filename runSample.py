@@ -13,6 +13,7 @@ if __name__ == '__main__':
     croppedImageFiles = glob("/Users/hopperj/work/hyperionGray/catsImageDistortion/images/cropped/*")
     croppedResizedImageFiles = glob("/Users/hopperj/work/hyperionGray/catsImageDistortion/images/cropped_resized/*")
     nosiyImageFiles = glob("/Users/hopperj/work/hyperionGray/catsImageDistortion/images/noisy/*")
+    textImageFiles = glob("/Users/hopperj/work/hyperionGray/catsImageDistortion/images/text/*")
 
     allDistortedImages = {
         "rotated":rotatedImageFiles,
@@ -20,6 +21,7 @@ if __name__ == '__main__':
         "cropped":croppedImageFiles,
         "croppedResized":croppedResizedImageFiles,
         "nosiy":nosiyImageFiles,
+        "text":textImageFiles,
     }
 
     imgSim = ImageSimilarity(origImageFiles)
@@ -31,6 +33,8 @@ if __name__ == '__main__':
 
         print("\n\n--------------")
         print(name)
-        print("Totals:",str(imgSim.getTotalScores()))
+        scores = imgSim.getTotalScores()
+        print("Totals:",str(scores[0]))
+        print("Correct: %.1f%%"%(scores[1]*100.0))
         print("Hash Scores:",imgSim.getIndividualHashScores())
         print("--------------")

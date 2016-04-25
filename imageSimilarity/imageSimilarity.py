@@ -2,6 +2,7 @@ import imagehash
 import PIL
 from PIL import Image
 import operator
+from bkstring.bktree import BkTree
 
 from .imageBank import ImageBank, ImageBankItem
 
@@ -20,6 +21,15 @@ class ImageSimilarity(object):
 
         self.resetScores()
 
+        self.aTree = BkTree(fn="hex_ham_dist")
+        self.pTree = BkTree(fn="hex_ham_dist")
+        self.dTree = BkTree(fn="hex_ham_dist")
+
+
+        self.aTree.add_list( [ str(e.getAvgHash()) for e in self._imageBank.getBank() ] )
+        self.pTree.add_list( [ str(e.getPHash()) for e in self._imageBank.getBank() ] )
+        self.dTree.add_list( [ str(e.getDHash()) for e in self._imageBank.getBank() ] )
+
         self.DEBUG = debug
 
 
@@ -31,6 +41,7 @@ class ImageSimilarity(object):
             'dHash':{ 'name':"", "score":0 },
         }
 
+        # wrong, right
         self._totals = [0,0]
         self._individualHashScores = { 'avgHash':0, "pHash":0, "dHash":0 }
 
@@ -88,27 +99,40 @@ class ImageSimilarity(object):
         image = ImageBankItem(image)
 
         # TODO: Make this faster. Don't check every single image. BK-tree? Log search sorted list?
-        for img in self._imageBank.getBank():
-            score = 1.0 - ( (image.getAvgHash() - img.getAvgHash()) / 64.0 )
-            if score >= self._scores['avgHash']['score']:
-                self._scores['avgHash'] = {
-                    'name':img.getName(),
-                    'score':score,
-                }
 
-            score = 1.0 - ( (image.getPHash() - img.getPHash()) / 64.0 )
-            if score >= self._scores['pHash']['score']:
-                self._scores['pHash'] = {
-                    'name':img.getName(),
-                    'score':score,
-                }
 
-            score = 1.0 - ( (image.getDHash() - img.getDHash()) / 64.0 )
-            if score >= self._scores['dHash']['score']:
-                self._scores['dHash'] = {
-                    'name':img.getName(),
-                    'score':score,
-                }
+        aDiff = self._aTree.search( image.getAvgHash(), 10 )
+        pDiff = self._aTree.search( image.getPHash(), 10 )
+        dDiff = self._aTree.search( image.getDHash(), 10 )
+
+
+
+        print("aDiff:",aDiff)
+        print("pDiff:",pDiff)
+        print("dDiff:",dDiff)
+
+        #
+        # for img in self._imageBank.getBank():
+        #     score = 1.0 - ( (image.getAvgHash() - img.getAvgHash()) / 64.0 )
+        #     if score >= self._scores['avgHash']['score']:
+        #         self._scores['avgHash'] = {
+        #             'name':img.getName(),
+        #             'score':score,
+        #         }
+        #
+        #     score = 1.0 - ( (image.getPHash() - img.getPHash()) / 64.0 )
+        #     if score >= self._scores['pHash']['score']:
+        #         self._scores['pHash'] = {
+        #             'name':img.getName(),
+        #             'score':score,
+        #         }
+        #
+        #     score = 1.0 - ( (image.getDHash() - img.getDHash()) / 64.0 )
+        #     if score >= self._scores['dHash']['score']:
+        #         self._scores['dHash'] = {
+        #             'name':img.getName(),
+        #             'score':score,
+        #         }
 
 
         self.__totalsCounter += 1
