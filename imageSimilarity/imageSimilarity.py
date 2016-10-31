@@ -2,7 +2,7 @@ import imagehash
 import PIL
 from PIL import Image
 import operator
-from bkstring.bktree import BkTree
+# from bkstring.bktree import BkTree
 
 from .imageBank import ImageBank, ImageBankItem
 
@@ -21,9 +21,9 @@ class ImageSimilarity(object):
 
         self.resetScores()
 
-        self.aTree = BkTree(fn="hex_ham_dist")
-        self.pTree = BkTree(fn="hex_ham_dist")
-        self.dTree = BkTree(fn="hex_ham_dist")
+        # self.aTree = BkTree(fn="hex_ham_dist")
+        # self.pTree = BkTree(fn="hex_ham_dist")
+        # self.dTree = BkTree(fn="hex_ham_dist")
 
 
         self.aTree.add_list( [ str(e.getAvgHash()) for e in self._imageBank.getBank() ] )
