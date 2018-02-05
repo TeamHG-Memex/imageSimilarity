@@ -7,52 +7,38 @@ import operator
 from .imageBank import ImageBank, ImageBankItem
 
 
-
-
-
 class ImageSimilarity(object):
     """
     Given an image, score it based on its similarity to a known set
     of images using ssim, diff hash, average hash, and phash
     """
+
     def __init__(self, imageAddresses=[], debug=0):
 
         self._imageBank = ImageBank(imageAddresses)
 
         self.resetScores()
 
-        # self.aTree = BkTree(fn="hex_ham_dist")
-        # self.pTree = BkTree(fn="hex_ham_dist")
-        # self.dTree = BkTree(fn="hex_ham_dist")
-
-
-        self.aTree.add_list( [ str(e.getAvgHash()) for e in self._imageBank.getBank() ] )
-        self.pTree.add_list( [ str(e.getPHash()) for e in self._imageBank.getBank() ] )
-        self.dTree.add_list( [ str(e.getDHash()) for e in self._imageBank.getBank() ] )
-
         self.DEBUG = debug
-
-
 
     def resetScores(self):
         self._scores = {
-            'avgHash':{ 'name':"", "score":0 },
-            'pHash':{ 'name':"", "score":0 },
-            'dHash':{ 'name':"", "score":0 },
+            'avgHash': {'name': "", "score": 0},
+            'pHash': {'name': "", "score": 0},
+            'dHash': {'name': "", "score": 0},
         }
 
         # wrong, right
-        self._totals = [0,0]
-        self._individualHashScores = { 'avgHash':0, "pHash":0, "dHash":0 }
+        self._totals = [0, 0]
+        self._individualHashScores = {'avgHash': 0, "pHash": 0, "dHash": 0}
 
         self.__totalsCounter = 0
 
-
     def getIndividualHashScores(self):
-        return [ (k,v/float(self.__totalsCounter)) for k,v in  sorted( self._individualHashScores.items(),key=operator.itemgetter(1), reverse=True ) ]
+        return [(k, v / float(self.__totalsCounter)) for k, v in sorted(self._individualHashScores.items(), key=operator.itemgetter(1), reverse=True)]
 
     def getTotalScores(self):
-        return self._totals, self._totals[1]/float(sum(self._totals))
+        return self._totals, self._totals[1] / float(sum(self._totals))
 
     def addImageToBank(self, location):
         self._imageBank.addImageToBank(location)
@@ -70,7 +56,6 @@ class ImageSimilarity(object):
         img = self.downloadImage(url)
         return self.scoreImage(img)
 
-
     def trackAccuracy(self, image):
         """
         @image should be an ImageBankItem object
@@ -81,10 +66,9 @@ class ImageSimilarity(object):
             if self._scores[k]['name'] in image.getName():
                 self._individualHashScores[k] += 1
                 correct = True
-        self._totals[ int(correct) ] += 1
+        self._totals[int(correct)] += 1
         if not correct and self.DEBUG:
-            print("wrong --> ",image.getName(), [ self._scores[k]['name'] for k in self._scores.keys() ])
-
+            print("wrong --> ", image.getName(), [self._scores[k]['name'] for k in self._scores.keys()])
 
     def scoreImage(self, image=None):
         """
@@ -100,16 +84,13 @@ class ImageSimilarity(object):
 
         # TODO: Make this faster. Don't check every single image. BK-tree? Log search sorted list?
 
+        aDiff = self._aTree.search(image.getAvgHash(), 10)
+        pDiff = self._aTree.search(image.getPHash(), 10)
+        dDiff = self._aTree.search(image.getDHash(), 10)
 
-        aDiff = self._aTree.search( image.getAvgHash(), 10 )
-        pDiff = self._aTree.search( image.getPHash(), 10 )
-        dDiff = self._aTree.search( image.getDHash(), 10 )
-
-
-
-        print("aDiff:",aDiff)
-        print("pDiff:",pDiff)
-        print("dDiff:",dDiff)
+        print("aDiff:", aDiff)
+        print("pDiff:", pDiff)
+        print("dDiff:", dDiff)
 
         #
         # for img in self._imageBank.getBank():
@@ -133,7 +114,6 @@ class ImageSimilarity(object):
         #             'name':img.getName(),
         #             'score':score,
         #         }
-
 
         self.__totalsCounter += 1
         self.trackAccuracy(image)
