@@ -1,0 +1,5 @@
+./setup.py
+./imageSimilarity/imageSimilarity.py
+./imageSimilarity/imageBank.py
+./imageSimilarity/__init__.py
+./runSample.py

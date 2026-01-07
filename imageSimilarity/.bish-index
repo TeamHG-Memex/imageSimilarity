@@ -1,0 +1,8 @@
+./imageSimilarity.py
+./imageBank.py
+./__init__.py
+./image_match/elasticsearch_driver.py
+./image_match/goldberg.py
+./image_match/signature_database_base.py
+./image_match/__init__.py
+./image_match/mongodb_driver.py
